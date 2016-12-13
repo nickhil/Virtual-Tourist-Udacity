@@ -7,3 +7,9 @@
 //
 
 import Foundation
+import UIKit
+
+class photoAlbumViewCell : UICollectionViewCell{
+
+    @IBOutlet weak var image: UIImageView!
+}
