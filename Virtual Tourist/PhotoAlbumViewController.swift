@@ -17,6 +17,8 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
     @IBOutlet weak var refreshButton: UIBarButtonItem!
     @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var activityIndicatorFull: UIActivityIndicatorView!
+    
     var toRemoveData: NSData!
     var pinData: Pin!
     var imageData: [NSData] = []
@@ -42,7 +44,6 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
         {
             setUIEnable(enable: false)
             refreshImages(completionHandler: { (success, error) in
-                
                 if success{
                     self.setUIEnable(enable: true)
                 }
@@ -55,6 +56,7 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
             })
         }
         print("the images loaded are: \(self.imageData.count)")
+        mapView.isUserInteractionEnabled = false
     }
     
     @IBAction func doneButtonPressed(_ sender: AnyObject) {
@@ -64,6 +66,7 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
         
     @IBAction func refreshButtonPressed(_ sender: AnyObject) {
         self.setUIEnable(enable: false)
+        self.activityIndicatorFull.startAnimating()
         self.deleteCurrentAlbum()
         refreshImages{(success,error) in
         if success{
@@ -74,6 +77,7 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
                 Error.sharedInstance.showError(controller: self, title: "Network Problem_refresh", message: "Cannot Download Images")
             }
         self.setUIEnable(enable: true)
+        self.activityIndicatorFull.stopAnimating()
         }
         }
     }
@@ -112,7 +116,7 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
         performUIUpdatesOnMain {
             self.refreshButton.isEnabled = true
             self.doneButton.isEnabled = true
-            self.albumView.allowsSelection = true
+           // self.albumView.allowsSelection = true
             self.mapView.alpha = 1.0
          }
         }
@@ -121,7 +125,7 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
                 performUIUpdatesOnMain {
                     self.refreshButton.isEnabled = false
                     self.doneButton.isEnabled = false
-                    self.albumView.allowsSelection = false
+                 //   self.albumView.allowsSelection = false
                     self.mapView.alpha = 0.6
                 }
             }
@@ -173,8 +177,9 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
     internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! photoAlbumViewCell
-            cell.activityIndicator.startAnimating()
-            cell.alpha = 0.5
+        cell.image.image = UIImage(named: "placeholder" )
+        cell.activityIndicator.startAnimating()
+        cell.alpha = 0.5
         if indexPath.row < imageData.count
         {
             let data = imageData[indexPath.row]
@@ -211,7 +216,7 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
         }
         
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         limit = limit - 1
         toRemoveData = imageData[indexPath.row]

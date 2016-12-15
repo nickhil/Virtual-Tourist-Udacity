@@ -12,4 +12,8 @@ import UIKit
 class photoAlbumViewCell : UICollectionViewCell{
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var image: UIImageView!
+    
+    override func prepareForReuse() {
+        image.image = nil
+    }
 }

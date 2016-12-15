@@ -35,8 +35,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="hJY-lb-Lsi">
-                                <frame key="frameInset" width="1000" height="1000"/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="hJY-lb-Lsi">
                                 <gestureRecognizers/>
                                 <connections>
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="bVP-35-Iu1"/>
@@ -126,14 +125,14 @@
                                                     </subviews>
                                                 </view>
                                                 <constraints>
-                                                    <constraint firstItem="fyj-Mh-LbY" firstAttribute="leading" secondItem="fQ4-0T-VuL" secondAttribute="leadingMargin" constant="6" id="2CK-aN-pyk"/>
                                                     <constraint firstAttribute="bottomMargin" secondItem="fyj-Mh-LbY" secondAttribute="bottom" constant="-22" id="BeC-Av-S15"/>
                                                     <constraint firstAttribute="trailingMargin" secondItem="fyj-Mh-LbY" secondAttribute="trailing" constant="-22" id="HQ1-8a-MM5"/>
-                                                    <constraint firstItem="fyj-Mh-LbY" firstAttribute="top" secondItem="DSd-QP-hfc" secondAttribute="bottom" id="I7V-Fy-6St"/>
                                                     <constraint firstItem="DSd-QP-hfc" firstAttribute="leading" secondItem="fQ4-0T-VuL" secondAttribute="leading" id="Jvu-uP-PLw"/>
                                                     <constraint firstItem="DSd-QP-hfc" firstAttribute="top" secondItem="fQ4-0T-VuL" secondAttribute="top" id="fmp-uu-IzD"/>
                                                     <constraint firstItem="DSd-QP-hfc" firstAttribute="height" secondItem="fQ4-0T-VuL" secondAttribute="height" id="lN5-Cy-2bN"/>
                                                     <constraint firstItem="DSd-QP-hfc" firstAttribute="width" secondItem="fQ4-0T-VuL" secondAttribute="width" id="nYb-DY-n6K"/>
+                                                    <constraint firstItem="fyj-Mh-LbY" firstAttribute="centerX" secondItem="DSd-QP-hfc" secondAttribute="centerX" id="r7E-HH-XDE"/>
+                                                    <constraint firstItem="fyj-Mh-LbY" firstAttribute="centerY" secondItem="DSd-QP-hfc" secondAttribute="centerY" id="uhd-qy-NNr"/>
                                                 </constraints>
                                                 <connections>
                                                     <outlet property="activityIndicator" destination="fyj-Mh-LbY" id="pAN-bq-ggF"/>
@@ -148,7 +147,7 @@
                                     </collectionView>
                                 </subviews>
                             </stackView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="DTt-fa-vue"/>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="DTt-fa-vue" userLabel="ActivityIndicatorFullView"/>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -168,6 +167,7 @@
                     <toolbarItems/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="activityIndicatorFull" destination="DTt-fa-vue" id="s8a-6b-U7Y"/>
                         <outlet property="albumView" destination="99f-1B-dW4" id="o2y-K2-GfQ"/>
                         <outlet property="doneButton" destination="VHN-Y6-ARN" id="dot-G0-vC4"/>
                         <outlet property="flowLayout" destination="Zp6-vy-0Lx" id="7wV-oa-sd7"/>

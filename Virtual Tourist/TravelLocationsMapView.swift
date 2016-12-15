@@ -31,6 +31,9 @@ class TravelLocationsMapViewController: UIViewController,MKMapViewDelegate,NSFet
             print("Cannot retrieve data")
             return
         }
+        for pin in map.annotations{
+        map.removeAnnotation(pin)
+        }
         if pinInfo.count > 0{
             for info in pinInfo{
                 let coordinates = CLLocationCoordinate2D(latitude: info.latitude, longitude: info.longitude )
@@ -126,7 +129,7 @@ class TravelLocationsMapViewController: UIViewController,MKMapViewDelegate,NSFet
     func setUIEnable(enable: Bool){
         if enable{
             performUIUpdatesOnMain {
-                self.map.isUserInteractionEnabled = true
+               // self.map.isUserInteractionEnabled = true
                 self.activityIndicator.stopAnimating()
                 self.map.alpha = 1.0
             }
@@ -135,7 +138,7 @@ class TravelLocationsMapViewController: UIViewController,MKMapViewDelegate,NSFet
         {
             performUIUpdatesOnMain {
                 self.activityIndicator.startAnimating()
-                self.map.isUserInteractionEnabled = false
+               // self.map.isUserInteractionEnabled = false
                 self.map.alpha = 0.6
             }
         }
