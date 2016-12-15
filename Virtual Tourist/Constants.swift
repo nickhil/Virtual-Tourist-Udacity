@@ -10,7 +10,6 @@ import UIKit
 import MapKit
 struct Constants {
     
-    // MARK: Flickr
     struct Flickr {
         static let APIScheme = "https"
         static let APIHost = "api.flickr.com"
@@ -22,7 +21,6 @@ struct Constants {
         static let SearchLonRange = (-180.0, 180.0)
     }
     
-    // MARK: Flickr Parameter Keys
     struct FlickrParameterKeys {
         static let Method = "method"
         static let APIKey = "api_key"
@@ -34,8 +32,7 @@ struct Constants {
         static let BoundingBox = "bbox"
         static let Page = "page"
     }
-    
-    // MARK: Flickr Parameter Values
+
     struct FlickrParameterValues {
         static let SearchMethod = "flickr.photos.search"
         static let APIKey = "a91843900a3c80e99669a470704601e6"
@@ -46,7 +43,6 @@ struct Constants {
         static let UseSafeSearch = "1"
     }
     
-    // MARK: Flickr Response Keys
     struct FlickrResponseKeys {
         static let Status = "stat"
         static let Photos = "photos"
@@ -58,8 +54,6 @@ struct Constants {
         static let ID = "id"
     }
     
-    
-    // MARK: Flickr Response Values
     struct FlickrResponseValues {
         static let OKStatus = "ok"
     }
@@ -78,8 +72,8 @@ struct Constants {
         
     }
     
-    static var limit = "20"
-    static var loadedData: Pin?
+    static let limit = 30
+    static var PinData: Pin?
 }
 
 

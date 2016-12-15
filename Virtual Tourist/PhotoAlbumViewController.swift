@@ -11,35 +11,32 @@ import UIKit
 import MapKit
 import CoreData
 
-class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionViewDelegate,NSFetchedResultsControllerDelegate{
+class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionViewDelegate,UICollectionViewDataSource,NSFetchedResultsControllerDelegate{
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var albumView: UICollectionView!
     @IBOutlet weak var refreshButton: UIBarButtonItem!
     @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBOutlet weak var mapView: MKMapView!
-    
+    var toRemoveData: NSData!
     var pinData: Pin!
     var imageData: [NSData] = []
-        var itemCount = 20
-    
+    var limit = 30
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var imageRequest: NSFetchRequest<Image> = Image.fetchRequest()
     var pinRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
     var fRController: NSFetchedResultsController<Image>!
     
     override func viewWillAppear(_ animated: Bool) {
-        self.viewWillAppear(true)
-        let space:CGFloat = 1.0
-        let dimension = (albumView.frame.size.width - (2*space))/3.0
-        flowLayout.minimumLineSpacing = space
+        let space:CGFloat = 3.0
+        let dimension = (view.frame.size.width - (5 * space)) / 3.0
         flowLayout.minimumInteritemSpacing = space
-        flowLayout.itemSize = CGSize(width: dimension, height: dimension)
-        
+        flowLayout.itemSize = CGSize(width:dimension,height:dimension)
         let coordinate = Constants.locationData.coordinates!
         let region = MKCoordinateRegionMake(coordinate, MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
         mapView.setRegion(region, animated: true)
         fRController = self.fetchResultsController()
-        self.fetchImage()
+        self.getImage()
         makeAnnotations()
         if pinData.image?.count == nil || pinData.image?.count == 0
         {
@@ -51,7 +48,7 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
                 }
                 else{
                     performUIUpdatesOnMain {
-                        Error.sharedInstance.showError(controller: self, title: "Internet Connection Problem", message: "Cannot download images, please check internet connection")
+                        Error.sharedInstance.showError(controller: self, title: "Error", message: "Cannot download images.")
                         self.setUIEnable(enable: true)
                     }
                 }
@@ -86,23 +83,19 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
             context.delete(images)
             (UIApplication.shared.delegate as! AppDelegate).saveContext()
         }
-    
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         albumView.reloadData()
-        Constants.loadedData = self.pinData
+        Constants.PinData = self.pinData
     }
     
     func refreshImages(completionHandler: @escaping(_ success: Bool,_ error: String) -> Void){
         setUIEnable(enable: false)
         let fetchImages = FetchImages()
-    
         fetchImages.getImages{(success,error) in
-        
-        if error != nil{
+        if error != ""{
                 return completionHandler(success,error!)
             }
         else
@@ -114,10 +107,13 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
     
     
     func setUIEnable(enable: Bool){
+        
         if enable{
         performUIUpdatesOnMain {
             self.refreshButton.isEnabled = true
             self.doneButton.isEnabled = true
+            self.albumView.allowsSelection = true
+            self.mapView.alpha = 1.0
          }
         }
             else
@@ -125,36 +121,30 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
                 performUIUpdatesOnMain {
                     self.refreshButton.isEnabled = false
                     self.doneButton.isEnabled = false
+                    self.albumView.allowsSelection = false
+                    self.mapView.alpha = 0.6
                 }
             }
-        
     }
     
     func makeAnnotations(){
-    
     let annotation = MKPointAnnotation()
         annotation.coordinate = Constants.locationData.coordinates!
         mapView.addAnnotation(annotation)
     }
     
-    func fetchImage(){
+    func getImage(){
         self.imageData = []
-        
         guard let data = fRController.fetchedObjects else
         {
             print("Cannot move fetched objects")
             return
         }
-        print("data count in collectionView is\(data.count)")
         for items in data
         {
         self.imageData.append(items.image!)
         }
-        print("In collection view:\(data.count) . Images fetched: \(imageData.count)")
-        
     }
-    
-    
     
     func fetchResultsController() -> NSFetchedResultsController<Image>
     {
@@ -164,7 +154,7 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
         fRController.delegate = self
         do
         {
-            print("fetch executed")
+            print("Fetch Performed")
             try fRController.performFetch()
         }
         catch
@@ -174,22 +164,23 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
         }
         return fRController
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         print("The total fetched object is \(self.fRController.fetchedObjects?.count)")
-        return itemCount
+        return limit
     }
     
-    private func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-       
+    internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! photoAlbumViewCell
+            cell.activityIndicator.startAnimating()
+            cell.alpha = 0.5
         if indexPath.row < imageData.count
         {
-            guard let data = imageData[indexPath.row] as? Data else
-            {
-                return cell
-            }
+            let data = imageData[indexPath.row]
             cell.image.image = UIImage(data: data as Data)
+            cell.activityIndicator.stopAnimating()
+            cell.alpha = 1.0
             return cell
         }
         else
@@ -198,12 +189,14 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
         }
         
     }
-
         
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         if type  == .delete{
             print("Deleted !! Count:\(imageData.count)")
             albumView.reloadData()
+        }
+        if type == .update{
+            print("data is getting updated")
         }
         if type == .insert{
             self.imageData = []
@@ -219,5 +212,23 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
         
     }
     
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        limit = limit - 1
+        toRemoveData = imageData[indexPath.row]
+        imageData.remove(at: indexPath.row)
+        collectionView.deleteItems(at: [indexPath])
+        let image:[Image]
+        do{
+        image = try self.context.fetch(self.imageRequest)
+            for items in image{
+                if items.image == self.toRemoveData{
+                context.delete(image[image.index(of: items)!])
+                }
+            }
+        }
+        catch{
+        print("cannot find ImageData")
+        }
+        appDelegate.saveContext()
+    }
 }

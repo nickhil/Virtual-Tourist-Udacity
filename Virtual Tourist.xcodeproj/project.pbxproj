@@ -96,6 +96,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		318882CE1E023E13002DDD45 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				31FDE9561DFE866B00EB4795 /* TravelLocationsMapView.swift */,
+				31427C961DFFAB53006D7CB0 /* PhotoAlbumViewController.swift */,
+				31427C981DFFB0EE006D7CB0 /* PhotoAlbumViewCell.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		318882CF1E023E35002DDD45 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				31FDE9111DFE6E8500EB4795 /* AppDelegate.swift */,
+				31FDE95C1DFEC60200EB4795 /* FlickrAPI.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		318882D01E023E54002DDD45 /* Supporting */ = {
+			isa = PBXGroup;
+			children = (
+				31FDE95E1DFECAA800EB4795 /* Constants.swift */,
+				31427C941DFFA7F3006D7CB0 /* GCDBlackBox.swift */,
+				31FDE9581DFEA9F800EB4795 /* Error.swift */,
+			);
+			name = Supporting;
+			sourceTree = "<group>";
+		};
 		31FDE9051DFE6E8500EB4795 = {
 			isa = PBXGroup;
 			children = (
@@ -119,19 +148,14 @@
 		31FDE9101DFE6E8500EB4795 /* Virtual Tourist */ = {
 			isa = PBXGroup;
 			children = (
-				31427C941DFFA7F3006D7CB0 /* GCDBlackBox.swift */,
+				318882D01E023E54002DDD45 /* Supporting */,
+				318882CF1E023E35002DDD45 /* Controller */,
+				318882CE1E023E13002DDD45 /* View */,
 				31FDE94A1DFE815300EB4795 /* Model */,
-				31FDE9111DFE6E8500EB4795 /* AppDelegate.swift */,
 				31FDE9151DFE6E8500EB4795 /* Main.storyboard */,
 				31FDE9181DFE6E8500EB4795 /* Assets.xcassets */,
 				31FDE91A1DFE6E8500EB4795 /* LaunchScreen.storyboard */,
 				31FDE91D1DFE6E8500EB4795 /* Info.plist */,
-				31FDE9561DFE866B00EB4795 /* TravelLocationsMapView.swift */,
-				31FDE9581DFEA9F800EB4795 /* Error.swift */,
-				31FDE95C1DFEC60200EB4795 /* FlickrAPI.swift */,
-				31FDE95E1DFECAA800EB4795 /* Constants.swift */,
-				31427C961DFFAB53006D7CB0 /* PhotoAlbumViewController.swift */,
-				31427C981DFFB0EE006D7CB0 /* PhotoAlbumViewCell.swift */,
 			);
 			path = "Virtual Tourist";
 			sourceTree = "<group>";

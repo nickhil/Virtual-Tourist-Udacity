@@ -12,10 +12,11 @@ import CoreData
 
 class FetchImages{
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var ImageRequest: NSFetchRequest<Image> = Image.fetchRequest()
     var pinRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
     
-    func getImages(completionHandler: @escaping(_ success: Bool,_ errorString: String?) -> Void)
+    func getImages(completionHandler: @escaping(_ success: Bool,_ error: String?) -> Void)
     {
         let methodParameters = [
             Constants.FlickrParameterKeys.Method: Constants.FlickrParameterValues.SearchMethod,
@@ -30,27 +31,19 @@ class FetchImages{
         let session = URLSession.shared
         let request = URLRequest(url: url)
         let task = session.dataTask(with: request) { (data, response, error) in
-            
             guard error == nil else
             {
                 print("Error with the request")
-                completionHandler(false,error!.localizedDescription)
+                completionHandler(false,error?.localizedDescription)
                 return
             }
             
             guard let data = data else
             {
-                print("cannot get data")
-                completionHandler(false,"No data returned")
-                return
+                print("Cannot get data")
+                return completionHandler(false,error?.localizedDescription) //
             }
-        
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                print("status code other tha 2xx")
-                completionHandler(false,"Status code othe than 2XX")
-                return
-            }
-            
+
             let parsedResult: NSDictionary!
             do {
                 parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! NSDictionary
@@ -79,15 +72,15 @@ class FetchImages{
             print("page limit\(pageLimit)")
             let randomPage = Int(arc4random_uniform(UInt32(pageLimit))) + 1
             print("random page:\(randomPage)")
-            self.getImageFromFlickr(methodParameters as [String : AnyObject], withPageNumber: randomPage,completionHandler: {(success, errorString) in
-                completionHandler(success,errorString)
+            self.getImageFromFlickr(methodParameters as [String : AnyObject], withPageNumber: randomPage,completionHandler: {(success, error) in
+                completionHandler(success,error)
                 })
         }
         task.resume()
     }
     
   
-    private func getImageFromFlickr(_ methodParameters: [String: AnyObject], withPageNumber: Int, completionHandler: @escaping(_ success: Bool,_ errorString: String?)-> Void ) {
+    private func getImageFromFlickr(_ methodParameters: [String: AnyObject], withPageNumber: Int, completionHandler: @escaping(_ success: Bool,_ error: String?)-> Void ) {
         
         var methodParametersWithPageNumber = methodParameters
         methodParametersWithPageNumber[Constants.FlickrParameterKeys.Page] = withPageNumber as AnyObject?
@@ -103,16 +96,9 @@ class FetchImages{
                 return
             }
             
-                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                completionHandler(false,"Status code othe than 2XX")
-
-                return
-            }
-            
             guard let data = data else {
-              print("no data returned")
-                completionHandler(false,"No data returned")
-                return
+              print("No data returned")
+            return
             }
             
                 var parsedResult: NSDictionary!
@@ -120,52 +106,38 @@ class FetchImages{
                 parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! NSDictionary
             } catch {
                 print("Could not parse the data as JSON: '\(data)'")
-                completionHandler(false,"Parsing error")
                 return
             }
-            guard let stat = parsedResult[Constants.FlickrResponseKeys.Status] as? String, stat == Constants.FlickrResponseValues.OKStatus else {
-                print("Flickr API returned an error. See error code and message in \(parsedResult)")
-                completionHandler(false,"Some other error")
-
-                return
-            }
-        
+                
             guard let photosDictionary = parsedResult[Constants.FlickrResponseKeys.Photos] as? [String:AnyObject] else {
                 print("Cannot find key '\(Constants.FlickrResponseKeys.Photos)' in \(parsedResult)")
-                completionHandler(false,"No key-Photos")
-
                 return
             }
             
-                
                 guard let photosArray = photosDictionary[Constants.FlickrResponseKeys.Photo] as? [[String: AnyObject]] else {
-                completionHandler(false,"No key-Photo")
-                print("unable to get photo list")
+                print("Cannot get key Phoyo")
                 return
             }
-            var count: Float
+            var count: Int
             count = 0
-            for imagesFound in photosArray
+            for _ in photosArray
             {
-                if count < 50
+               if count < 30
                 {
                 let randomPhotoIndex = Int(arc4random_uniform(UInt32(photosArray.count)))
                 let photoDictionary = photosArray[randomPhotoIndex] as [String: AnyObject]
-               
+                    
                     guard let imageUrlString = photoDictionary[Constants.FlickrResponseKeys.MediumURL] as? String else
                     {
-                    completionHandler(false,"Cannot take image URL")
-                  print("unable to get image url")
-                    return
-                }
+                        print("Cannot get image url")
+                        return
+                    }
                 
                     guard let imageID = photoDictionary[Constants.FlickrResponseKeys.ID] as? String else{
                         print("cannot get photo ID")
-                        completionHandler(false,"unable to get photo ID")
-                        return
+                       return completionHandler(false,"unable to get photo ID")
                     }
                     
-                
                 let imageURL = URL(string: imageUrlString)!
                 if let imageData = NSData(contentsOf: imageURL)
                 {
@@ -175,6 +147,7 @@ class FetchImages{
                 let image = Image(entity: imageDescription!, insertInto: self.context)
                 image.image = imageData
                 image.imageID = imageID
+                Constants.Image.imageId2 = imageID
                     do{
                         try self.context.save()
                     }
@@ -183,16 +156,16 @@ class FetchImages{
                         return
                     }
                 } else {
-                    print("unable to save data")
-                    completionHandler(false,"Image does not exist at \(imageURL)")
-                    return
+                    print("Cannot save data")
+                   return completionHandler(false,"Image does not exist at \(imageURL)")
+                   
                     }
                     count+=1
                     print("for loop executed \(count)")
-                    self.fetchStoredData()
+                    self.getModelData()
             }
         }
-            return completionHandler(true,"success")
+            return completionHandler(true,"")
         }
         task.resume()
     }
@@ -226,35 +199,34 @@ class FetchImages{
     }
 
     
-    func fetchStoredData()
+   func getModelData()
     {
-        
-        var data:[Image]!
+        var imageData:[Image]!
         do{
-            data = try self.context.fetch(self.ImageRequest)
-            print("total photos present in data base is \(data.count)")
-            
+            imageData = try self.context.fetch(self.ImageRequest)
+            print("Images present in data base is \(imageData.count)")
         }
         catch{
-            print("unable to retrieve data")
+            print("Cannot Retrieve Image Data")
             return
         }
         
-        var pin:[Pin] = []
+        var pinData:[Pin] = []
         do{
-            pin = try self.context.fetch(self.pinRequest)
+            pinData = try self.context.fetch(self.pinRequest)
         }
         catch
         {
-            print("unable to get pin data")
+            print("Cannot Retrieve Pin data")
         }
-        for items in pin
+        
+        for items in pinData
         {
             if items.latitude == Constants.locationData.latitude  && items.longitude == Constants.locationData.longitude
             {
                 do{
-                    data = try self.context.fetch(self.ImageRequest)
-                    print("total photos present in data base is \(data.count)")
+                    imageData = try self.context.fetch(self.ImageRequest)
+                    print("total Images present in data base are \(imageData.count)")
                     
                 }
                 catch{
@@ -263,21 +235,18 @@ class FetchImages{
                     return
                 }
                 
-                for item in data
+                for item in imageData
                 {
                     if item.imageID == Constants.Image.imageId2
                     {
                         print("found the photo")
-                        item.pin = pin[pin.index(of: items)!]
+                        item.pin = pinData[pinData.index(of: items)!]
                         (UIApplication.shared.delegate as! AppDelegate).saveContext()
                     }
                 }
                 
             }
         }
-        (UIApplication.shared.delegate as! AppDelegate).saveContext()
+        appDelegate.saveContext()
     }
 }
-
-
-
