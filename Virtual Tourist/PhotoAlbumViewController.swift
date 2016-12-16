@@ -66,7 +66,6 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
         
     @IBAction func refreshButtonPressed(_ sender: AnyObject) {
         self.setUIEnable(enable: false)
-        self.activityIndicatorFull.startAnimating()
         self.deleteCurrentAlbum()
         refreshImages{(success,error) in
         if success{
@@ -77,7 +76,7 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
                 Error.sharedInstance.showError(controller: self, title: "Network Problem_refresh", message: "Cannot Download Images")
             }
         self.setUIEnable(enable: true)
-        self.activityIndicatorFull.stopAnimating()
+        
         }
         }
     }
@@ -118,6 +117,9 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
             self.doneButton.isEnabled = true
            // self.albumView.allowsSelection = true
             self.mapView.alpha = 1.0
+           self.activityIndicatorFull.stopAnimating()
+            
+            
          }
         }
             else
@@ -126,7 +128,9 @@ class PhotoAlbumViewController: UIViewController,MKMapViewDelegate,UICollectionV
                     self.refreshButton.isEnabled = false
                     self.doneButton.isEnabled = false
                  //   self.albumView.allowsSelection = false
-                    self.mapView.alpha = 0.6
+                    self.mapView.alpha = 0.5
+                    self.activityIndicatorFull.startAnimating()
+                    
                 }
             }
     }

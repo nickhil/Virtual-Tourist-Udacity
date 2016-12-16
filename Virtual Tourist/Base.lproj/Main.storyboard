@@ -85,22 +85,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iO9-Ll-LU1">
-                                <items>
-                                    <navigationItem title="Virtual Tourist" id="M2U-DU-HFh" userLabel="Virtual Tourist">
-                                        <barButtonItem key="leftBarButtonItem" title="Done" id="VHN-Y6-ARN" userLabel="Done">
-                                            <connections>
-                                                <action selector="doneButtonPressed:" destination="Pbv-LP-0A5" id="JHN-Ut-kUk"/>
-                                            </connections>
-                                        </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="LlK-dm-2hM" userLabel="Refresh">
-                                            <connections>
-                                                <action selector="refreshButtonPressed:" destination="Pbv-LP-0A5" id="auw-lZ-qbT"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="OzB-vG-hWx">
                                 <subviews>
                                     <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="SJ8-oS-uTn"/>
@@ -147,19 +131,36 @@
                                     </collectionView>
                                 </subviews>
                             </stackView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="DTt-fa-vue" userLabel="ActivityIndicatorFullView"/>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="DTt-fa-vue" userLabel="ActivityIndicatorFullView"/>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iO9-Ll-LU1">
+                                <items>
+                                    <navigationItem title="Virtual Tourist" id="M2U-DU-HFh" userLabel="Virtual Tourist">
+                                        <barButtonItem key="leftBarButtonItem" title="Done" id="VHN-Y6-ARN" userLabel="Done">
+                                            <connections>
+                                                <action selector="doneButtonPressed:" destination="Pbv-LP-0A5" id="JHN-Ut-kUk"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="LlK-dm-2hM" userLabel="Refresh">
+                                            <connections>
+                                                <action selector="refreshButtonPressed:" destination="Pbv-LP-0A5" id="auw-lZ-qbT"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="OzB-vG-hWx" firstAttribute="leading" secondItem="Z6m-ga-0Jd" secondAttribute="leading" id="0lb-D8-Pkj"/>
                             <constraint firstAttribute="bottom" secondItem="OzB-vG-hWx" secondAttribute="bottom" id="4Po-EJ-ZCa"/>
                             <constraint firstItem="OzB-vG-hWx" firstAttribute="leading" secondItem="Z6m-ga-0Jd" secondAttribute="leading" id="6d1-mb-8ur"/>
-                            <constraint firstItem="OzB-vG-hWx" firstAttribute="top" secondItem="iO9-Ll-LU1" secondAttribute="bottom" id="9SJ-U8-aCN"/>
+                            <constraint firstItem="OzB-vG-hWx" firstAttribute="top" secondItem="iO9-Ll-LU1" secondAttribute="bottom" id="9SJ-U8-aCN" userLabel="Stack View.top = Navigation Bar.bottom + 1"/>
                             <constraint firstItem="DTt-fa-vue" firstAttribute="leading" secondItem="Z6m-ga-0Jd" secondAttribute="leading" constant="170" id="ER5-eg-Yhq"/>
+                            <constraint firstItem="OzB-vG-hWx" firstAttribute="top" secondItem="LKm-yx-WZE" secondAttribute="bottom" constant="49" id="RMP-Bx-Hzo" userLabel="Stack View.top = Top Layout Guide.bottom + 50"/>
+                            <constraint firstItem="iO9-Ll-LU1" firstAttribute="top" secondItem="LKm-yx-WZE" secondAttribute="bottom" id="Slh-Re-pev"/>
                             <constraint firstAttribute="trailing" secondItem="OzB-vG-hWx" secondAttribute="trailing" id="UwZ-59-UHV"/>
-                            <constraint firstItem="OzB-vG-hWx" firstAttribute="top" secondItem="LKm-yx-WZE" secondAttribute="bottom" constant="88" id="bZX-eV-wlg"/>
+                            <constraint firstItem="iO9-Ll-LU1" firstAttribute="leading" secondItem="Z6m-ga-0Jd" secondAttribute="leadingMargin" constant="-16" id="aCn-6V-21j"/>
                             <constraint firstItem="iO9-Ll-LU1" firstAttribute="trailing" secondItem="OzB-vG-hWx" secondAttribute="trailing" id="g3s-ry-mGt"/>
-                            <constraint firstItem="iO9-Ll-LU1" firstAttribute="top" secondItem="OzB-vG-hWx" secondAttribute="top" constant="-44" id="oAR-21-LuT"/>
                             <constraint firstItem="DTt-fa-vue" firstAttribute="centerY" secondItem="Z6m-ga-0Jd" secondAttribute="centerY" id="qLl-R0-yeG"/>
                             <constraint firstItem="OzB-vG-hWx" firstAttribute="leading" secondItem="iO9-Ll-LU1" secondAttribute="leading" id="uNg-gl-ZdR"/>
                         </constraints>
@@ -177,7 +178,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fNB-6u-R4i" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="309.375" y="136.25"/>
+            <point key="canvasLocation" x="308" y="135.38230884557723"/>
         </scene>
     </scenes>
 </document>
